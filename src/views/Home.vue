@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import Words from '../api/Words';
+import Words from '../api/typo-chain/Words';
 
 export default {
   name: 'Home-V',
@@ -25,29 +25,35 @@ export default {
     return {
       input: '',
       words: [],
-      CharIndex: 0,
-      ActiveWordIndex: 0,
+      Char: 0,
+      ActiveWord: 0,
     };
   },
   async mounted() {
-    const res = await Words.Get();
-    this.words = res.words;
-    window.addEventListener('keydown', (event) => {
-      if (event.key === ' ') {
-        event.preventDefault();
-      }
-      this.input = event.key;
-    });
+    await this.FetchData();
+    this.AddInputListener();
   },
   methods: {
-    HandleState(Word, char, WordIndex, CharIndex) {
-      if (WordIndex === this.ActiveWordIndex && this.CharIndex === CharIndex) {
-        if (this.input === char) {
-          ++this.CharIndex;
+    async FetchData() {
+      const res = await Words.Get();
+      this.words = res.words;
+    },
+    AddInputListener() {
+      window.addEventListener('keydown', (event) => {
+        if (event.key === ' ') {
+          event.preventDefault();
         }
-        if (this.CharIndex === Word.length) {
-          ++this.ActiveWordIndex;
-          this.CharIndex = 0;
+        this.input = event.key;
+      });
+    },
+    HandleState(Word, char, row, col) {
+      if (row === this.ActiveWord && this.Char === col) {
+        if (this.input === char) {
+          ++this.Char;
+        }
+        if (this.Char >= Word.length) {
+          ++this.ActiveWord;
+          this.Char = 0;
         }
         return 'fw-bold text-danger';
       }
