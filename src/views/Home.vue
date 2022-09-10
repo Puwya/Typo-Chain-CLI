@@ -6,7 +6,7 @@
           <span
             v-for="(char, j) in word"
             :key="j"
-            :class="input && HandleState(word, char, i, j)"
+            :class="input && HandleState(word, i, j)"
             v-text="char"
           ></span>
           <span>&nbsp;</span>
@@ -25,8 +25,8 @@ export default {
     return {
       input: '',
       words: [],
-      Char: 0,
-      ActiveWord: 0,
+      letter: 0,
+      activeWord: 0,
     };
   },
   async mounted() {
@@ -46,14 +46,14 @@ export default {
         this.input = event.key;
       });
     },
-    HandleState(Word, char, row, col) {
-      if (row === this.ActiveWord && this.Char === col) {
-        if (this.input === char) {
-          ++this.Char;
+    HandleState(word, row, col) {
+      if (row === this.activeWord && this.letter === col) {
+        if (this.input === word[col]) {
+          ++this.letter;
         }
-        if (this.Char >= Word.length) {
-          ++this.ActiveWord;
-          this.Char = 0;
+        if (this.letter >= word.length) {
+          ++this.activeWord;
+          this.letter = 0;
         }
         return 'fw-bold text-danger';
       }
